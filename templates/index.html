@@ -4,39 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PocketSaaS - Financial Hub for Students</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Outfit:wght@800;900&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         .font-brand { font-family: 'Outfit', sans-serif; }
-
-        /* Smooth Floating Text Animation */
         @keyframes floatEffect {
             0%, 100% { transform: translateY(0px) scale(1); }
-            50% { transform: translateY(-8px) scale(1.02); }
+            50% { transform: translateY(-6px) scale(1.01); }
         }
-
-        /* 3D Animated Gradient Shimmer */
         @keyframes gradientMove {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
-
         .animated-wordart {
             background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 25%, #ec4899 50%, #f59e0b 75%, #4f46e5 100%);
             background-size: 300% 300%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             animation: gradientMove 6s ease infinite, floatEffect 4s ease-in-out infinite;
-            filter: drop-shadow(0px 8px 16px rgba(99, 102, 241, 0.25));
-        }
-
-        .creator-badge {
-            background: linear-gradient(90deg, #4f46e5, #9333ea);
-            box-shadow: 0 4px 20px -2px rgba(99, 102, 241, 0.4);
         }
     </style>
 </head>
@@ -51,21 +39,29 @@
                 </div>
                 <div class="flex items-center gap-2">
                     <span class="font-black text-slate-900 tracking-tight text-xl">Pocket<span class="text-indigo-600">SaaS</span></span>
-                    <span class="text-[10px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full uppercase tracking-wider">100% Free</span>
+                    <span class="text-[10px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full uppercase">100% Free</span>
                 </div>
             </div>
             
-            <div class="flex items-center gap-3">
-                <a href="/export" class="inline-flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-4 py-2 rounded-xl transition shadow-sm">
-                    <span>📥</span> Export CSV
+            <div class="flex items-center gap-2.5">
+                <!-- Month Filter -->
+                <form method="GET" action="/" class="hidden sm:block">
+                    <select name="month" onchange="this.form.submit()" class="text-xs font-bold bg-slate-100 border border-slate-200 rounded-xl px-2.5 py-2 text-slate-700 focus:outline-none">
+                        {% for m in available_months %}
+                        <option value="{{ m }}" {% if m == current_month %}selected{% endif %}>📅 {{ m }}</option>
+                        {% endfor %}
+                    </select>
+                </form>
+
+                <a href="/export" class="inline-flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-3.5 py-2 rounded-xl transition shadow-sm">
+                    <span>📥</span> CSV
                 </a>
 
-                <!-- User Profile & Logout -->
                 <div class="flex items-center gap-2 pl-2 border-l border-slate-200">
-                    <span class="text-xs font-bold text-slate-700 bg-slate-100 px-3 py-1.5 rounded-xl capitalize flex items-center gap-1.5">
-                        <span>👤</span> {{ username }}
+                    <span class="text-xs font-bold text-slate-700 bg-slate-100 px-3 py-1.5 rounded-xl capitalize">
+                        👤 {{ username }}
                     </span>
-                    <a href="/logout" title="Sign Out" class="text-xs text-rose-500 hover:text-rose-700 font-bold bg-rose-50 hover:bg-rose-100 px-2.5 py-1.5 rounded-xl transition">
+                    <a href="/logout" class="text-xs text-rose-500 hover:text-rose-700 font-bold bg-rose-50 hover:bg-rose-100 px-2.5 py-1.5 rounded-xl transition">
                         Logout
                     </a>
                 </div>
@@ -73,134 +69,118 @@
         </div>
     </header>
 
-    <!-- FRONT PAGE HERO BANNER: WORDART & MOTION FOR CREATED BY ABHINAV -->
-    <section class="relative overflow-hidden pt-10 pb-8 px-4 bg-gradient-to-b from-white via-indigo-50/20 to-[#F8FAFC] border-b border-slate-200/60 text-center">
-        <!-- Background Ambient Light -->
-        <div class="absolute -top-12 left-1/2 -translate-x-1/2 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
-
-        <div class="max-w-4xl mx-auto relative z-10">
-            <!-- Floating Founder Pill -->
-            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-white text-xs font-bold uppercase tracking-wider creator-badge mb-4">
-                <span>🚀</span> FOUNDER & LEAD DEVELOPER
+    <!-- HERO SECTION -->
+    <section class="relative overflow-hidden pt-8 pb-6 px-4 bg-gradient-to-b from-white via-indigo-50/20 to-[#F8FAFC] border-b border-slate-200/60 text-center">
+        <div class="max-w-4xl mx-auto">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-indigo-700 bg-indigo-50 border border-indigo-100 text-[11px] font-bold uppercase tracking-wider mb-2">
+                <span>📅</span> Viewing Period: <strong>{{ current_month }}</strong>
             </div>
-
-            <!-- BOLD 3D WORDART WITH MOTION -->
-            <h1 class="font-brand text-4xl sm:text-6xl md:text-7xl font-black uppercase tracking-tight leading-none mb-3 break-words animated-wordart select-none">
+            <h1 class="font-brand text-4xl sm:text-6xl font-black uppercase tracking-tight animated-wordart select-none">
                 CREATED BY ABHINAV
             </h1>
-
-            <!-- Wrapped Subtitle -->
-            <div class="max-w-xl mx-auto mt-3">
-                <p class="text-sm sm:text-base font-semibold text-slate-600 leading-relaxed">
-                    Personalized Financial Engine for Students • Real-Time Daily Spend Limits • Roommate Ledger
-                </p>
-            </div>
+            <p class="text-xs sm:text-sm font-semibold text-slate-500 mt-2">
+                Student Finance Workspace • GST/Bill Splitter • Real-Time Budget % Used
+            </p>
         </div>
     </section>
 
-    <!-- MAIN APP DASHBOARD -->
-    <main class="max-w-6xl mx-auto px-4 mt-8 w-full mb-10">
+    <!-- DASHBOARD -->
+    <main class="max-w-6xl mx-auto px-4 mt-6 w-full mb-10">
+
+        <!-- BUDGET PERCENTAGE HEALTH BAR -->
+        <div class="bg-white p-4 rounded-2xl border border-slate-200/70 shadow-sm mb-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-black text-slate-900 uppercase tracking-wider">Budget Utilization</span>
+                    <span class="text-xs font-bold px-2 py-0.5 rounded-full {% if budget_percent > 90 %}bg-rose-100 text-rose-700{% elif budget_percent > 70 %}bg-amber-100 text-amber-700{% else %}bg-emerald-100 text-emerald-700{% endif %}">
+                        {{ budget_percent }}% Used
+                    </span>
+                </div>
+                <span class="text-xs text-slate-400 font-medium">₹{{ total }} spent out of ₹{{ budget }} monthly allowance</span>
+            </div>
+            <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
+                <div class="h-full rounded-full transition-all duration-500 {% if budget_percent > 90 %}bg-rose-500{% elif budget_percent > 70 %}bg-amber-500{% else %}bg-indigo-600{% endif %}" 
+                     style="width: {{ [budget_percent, 100]|min }}%"></div>
+            </div>
+        </div>
         
         <!-- 4 Metric Cards Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            
-            <!-- Kul Kharcha -->
-            <div class="bg-white p-5 rounded-2xl border border-slate-200/70 shadow-sm hover:shadow-md transition">
+            <div class="bg-white p-5 rounded-2xl border border-slate-200/70 shadow-sm">
                 <div class="flex justify-between items-center text-slate-400 text-xs font-semibold uppercase tracking-wider">
                     <span>Kul Kharcha</span>
                     <span>💸</span>
                 </div>
-                <div class="text-2xl font-black text-slate-900 mt-2">₹{{ total }}</div>
-                <div class="text-[11px] text-slate-400 mt-1 font-medium">Recorded Spends</div>
+                <div class="text-2xl font-black text-slate-900 mt-2 truncate">₹{{ total }}</div>
+                <div class="text-[11px] text-slate-400 mt-1 font-medium">{{ current_month }} Total</div>
             </div>
 
-            <!-- Bacha Paisa + Budget Limit Editor -->
-            <div class="bg-white p-5 rounded-2xl border border-slate-200/70 shadow-sm hover:shadow-md transition">
+            <div class="bg-white p-5 rounded-2xl border border-slate-200/70 shadow-sm">
                 <div class="flex justify-between items-center">
                     <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Bacha Paisa</span>
                     <button onclick="document.getElementById('budgetModal').classList.remove('hidden')" 
                             class="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-2 py-0.5 rounded-md transition">
-                        ✏️ Set Limit
+                        ✏ Set Limit
                     </button>
                 </div>
-                <div class="text-2xl font-black {% if remaining < 1000 %}text-rose-500{% else %}text-emerald-600{% endif %} mt-2">
+                <div class="text-2xl font-black {% if remaining_raw < 1000 %}text-rose-500{% else %}text-emerald-600{% endif %} mt-2 truncate">
                     ₹{{ remaining }}
                 </div>
-                <div class="text-[11px] text-slate-400 mt-1 font-medium">Allowance: ₹{{ budget }}</div>
+                <div class="text-[11px] text-slate-400 mt-1 font-medium">Monthly Limit: ₹{{ budget }}</div>
             </div>
 
-            <!-- Hostel Survival Metric: Safe Daily Spending Limit -->
-            <div class="bg-white p-5 rounded-2xl border border-indigo-100 shadow-sm hover:shadow-md transition bg-gradient-to-br from-indigo-50/30 to-white">
+            <div class="bg-white p-5 rounded-2xl border border-indigo-100 shadow-sm bg-gradient-to-br from-indigo-50/30 to-white">
                 <div class="flex justify-between items-center text-indigo-600 text-xs font-bold uppercase tracking-wider">
                     <span>Daily Safe Spend</span>
                     <span>⏳</span>
                 </div>
-                <div class="text-2xl font-black text-indigo-900 mt-2">₹{{ daily_safe_spend }}<span class="text-xs font-normal text-slate-400">/day</span></div>
+                <div class="text-2xl font-black text-indigo-900 mt-2 truncate">₹{{ daily_safe_spend }}<span class="text-xs font-normal text-slate-400">/day</span></div>
                 <div class="text-[11px] text-indigo-600/80 mt-1 font-medium">{{ days_left }} days left in month</div>
             </div>
 
-            <!-- Roommate Dues (50% Split) -->
-            <div class="bg-white p-5 rounded-2xl border border-amber-200/70 shadow-sm hover:shadow-md transition bg-gradient-to-br from-amber-50/40 to-white">
+            <div class="bg-white p-5 rounded-2xl border border-amber-200/70 shadow-sm bg-gradient-to-br from-amber-50/40 to-white">
                 <div class="flex justify-between items-center text-amber-600 text-xs font-bold uppercase tracking-wider">
-                    <span>Roommate Dues</span>
+                    <span>Friends Owe You</span>
                     <span>🤝</span>
                 </div>
-                <div class="text-2xl font-black text-amber-700 mt-2">₹{{ roommate_owes }}</div>
-                <div class="text-[11px] text-amber-600/80 mt-1 font-medium">To collect from friends</div>
-            </div>
-
-        </div>
-
-        <!-- Budget Health Bar -->
-        <div class="bg-white p-4 rounded-2xl border border-slate-200/70 shadow-sm mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div class="flex items-center gap-3">
-                <span class="text-lg">📊</span>
-                <div>
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700">Monthly Burn Rate</h3>
-                    <p class="text-[11px] text-slate-400 font-medium">
-                        {% if budget_percent >= 90 %}🚨 Khatre ki ghanti! Budget lagbhag khatam ho chuka hai.{% elif budget_percent >= 70 %}⚠️ Dhyan dein, kharcha tezi se badh raha hai.{% else %}✨ Sab theek hai, aap safe limit mein hain.{% endif %}
-                    </p>
-                </div>
-            </div>
-            <div class="w-full sm:w-64">
-                <div class="flex justify-between text-xs font-bold mb-1">
-                    <span class="text-slate-400">Used</span>
-                    <span class="{% if budget_percent > 85 %}text-rose-600{% else %}text-indigo-600{% endif %}">{{ budget_percent }}%</span>
-                </div>
-                <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                    <div class="h-2 rounded-full transition-all duration-500 {% if budget_percent > 85 %}bg-rose-500{% elif budget_percent > 65 %}bg-amber-400{% else %}bg-indigo-600{% endif %}" 
-                         style="width: {{ budget_percent }}%"></div>
-                </div>
+                <div class="text-2xl font-black text-amber-700 mt-2 truncate">₹{{ roommate_owes }}</div>
+                <div class="text-[11px] text-amber-600/80 mt-1 font-medium">Unsettled friend share</div>
             </div>
         </div>
 
-        <!-- Main Workspace (Add Form, Charts, Ledger) -->
+        <!-- Main Workspace -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
             <!-- Left Form (4 Cols) -->
             <div class="lg:col-span-4 space-y-6">
                 <div class="bg-white p-5 rounded-2xl border border-slate-200/70 shadow-sm">
-                    <h2 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-4 flex items-center gap-2">
-                        <span>⚡</span> Naya Kharcha Jodo
-                    </h2>
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                            <span>⚡</span> Naya Kharcha Jodo
+                        </h2>
+                        <button type="button" onclick="document.getElementById('gstSplitModal').classList.remove('hidden')" 
+                                class="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-2.5 py-1 rounded-xl transition">
+                            🍕 GST Bill Splitter
+                        </button>
+                    </div>
                     
-                    <form action="/add" method="POST" class="space-y-4">
+                    <form action="/add" method="POST" id="expenseForm" class="space-y-4">
                         <div>
                             <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Kharche Ka Naam</label>
-                            <input type="text" name="title" required placeholder="e.g. Mess fees, Maggi, Metro recharge" 
+                            <input type="text" id="formTitle" name="title" required placeholder="e.g. Zomato Order, Mess, Metro" 
                                    class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition">
                         </div>
 
                         <div>
-                            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Amount (₹)</label>
-                            <input type="number" step="any" name="amount" required placeholder="0.00" 
+                            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Total Amount (₹)</label>
+                            <input type="number" step="any" max="1000000" id="formAmount" name="amount" required placeholder="0.00" 
                                    class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition">
                         </div>
 
                         <div>
                             <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Category</label>
-                            <select name="category" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition font-medium text-slate-700">
-                                <option value="Food & Mess">🍔 Food & Mess</option>
+                            <select id="formCategory" name="category" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition font-medium text-slate-700">
+                                <option value="Food & Cafe">🍔 Food & Cafe</option>
                                 <option value="Hostel & Room">🏠 Hostel & Room</option>
                                 <option value="Travel & Metro">🚌 Travel & Metro</option>
                                 <option value="Books & College">📚 Books & College</option>
@@ -209,26 +189,47 @@
                             </select>
                         </div>
 
-                        <div class="flex items-center gap-3 p-3 bg-amber-50/70 border border-amber-200/80 rounded-xl">
-                            <input type="checkbox" id="split" name="is_split" value="1" class="w-4 h-4 text-amber-600 rounded border-amber-300 focus:ring-amber-500">
-                            <label for="split" class="text-xs font-bold text-amber-900 cursor-pointer select-none">
-                                Split 50% with Roommate
-                                <span class="block text-[10px] font-normal text-amber-700">Roommate ka half hissa auto-track hoga</span>
-                            </label>
+                        <!-- Split with Friend Details -->
+                        <div class="p-3 bg-amber-50/70 border border-amber-200/80 rounded-xl space-y-2">
+                            <div class="flex items-center gap-3">
+                                <input type="checkbox" id="split" name="is_split" value="1" 
+                                       onclick="document.getElementById('friendBox').classList.toggle('hidden')"
+                                       class="w-4 h-4 text-amber-600 rounded border-amber-300 focus:ring-amber-500">
+                                <label for="split" class="text-xs font-bold text-amber-900 cursor-pointer select-none">
+                                    Split with Friend / Roommate
+                                </label>
+                            </div>
+                            <div id="friendBox" class="hidden pt-2 space-y-2">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-amber-800 uppercase tracking-wider mb-1">Friend Name</label>
+                                    <input type="text" id="formFriendName" name="friend_name" placeholder="Friend ka naam (e.g. Himshikhar)" 
+                                           class="w-full bg-white border border-amber-200 rounded-lg p-2 text-xs focus:outline-none font-medium">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-amber-800 uppercase tracking-wider mb-1">Friend Kitna Dega? (₹)</label>
+                                    <input type="number" step="any" id="formFriendOwes" name="friend_owes" placeholder="Khaali chhodne par 50% split hoga" 
+                                           class="w-full bg-white border border-amber-200 rounded-lg p-2 text-xs focus:outline-none font-medium">
+                                </div>
+                            </div>
                         </div>
 
-                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 active:scale-[0.99] text-white font-bold py-2.5 rounded-xl text-sm transition shadow-md shadow-indigo-100 mt-2">
+                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 active:scale-[0.99] text-white font-bold py-2.5 rounded-xl text-sm transition shadow-md shadow-indigo-100">
                             + Add Transaction
                         </button>
                     </form>
                 </div>
 
-                <!-- Clean Student Tip Card -->
-                <div class="bg-indigo-50/60 border border-indigo-100 p-5 rounded-2xl">
-                    <span class="text-xs font-extrabold uppercase text-indigo-700">💡 Student Budget Tip</span>
-                    <p class="text-xs text-slate-600 mt-2 leading-relaxed">
-                        Daily Safe Spend ko hamesha dhyan mein rakho. Agar aaj extra kharcha hota hai toh kal use balance kar lo taaki mahine ke aakhri dino mein budget tight na ho!
-                    </p>
+                <!-- Reset Data Trigger -->
+                <div class="bg-rose-50/60 border border-rose-100 p-4 rounded-2xl flex items-center justify-between">
+                    <div>
+                        <span class="text-xs font-bold text-rose-800 block">Reset Ledger</span>
+                        <span class="text-[10px] text-rose-600">Testing data saaf karein</span>
+                    </div>
+                    <form action="/reset_data" method="POST" onsubmit="return confirm('Kya aap apna test data delete karna chahte hain?')">
+                        <button type="submit" class="text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 px-3 py-1.5 rounded-xl transition">
+                            Reset All
+                        </button>
+                    </form>
                 </div>
             </div>
 
@@ -237,32 +238,29 @@
 
                 <!-- Donut Chart -->
                 <div class="bg-white p-5 rounded-2xl border border-slate-200/70 shadow-sm">
-                    <div class="flex justify-between items-center mb-2">
-                        <h2 class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
-                            <span>📊</span> Category Spending Analysis
-                        </h2>
-                    </div>
-                    
+                    <h2 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-2 flex items-center gap-2">
+                        <span>📊</span> Spending Breakdown ({{ current_month }})
+                    </h2>
                     {% if expenses %}
                     <div class="w-full max-w-xs mx-auto py-2">
                         <canvas id="expenseChart"></canvas>
                     </div>
                     {% else %}
-                    <p class="text-slate-400 text-xs text-center py-8">Chart load karne ke liye pehla kharcha log karein.</p>
+                    <p class="text-slate-400 text-xs text-center py-8">Is month ka koi kharcha nahi hai.</p>
                     {% endif %}
                 </div>
 
                 <!-- Transactions Ledger -->
                 <div class="bg-white rounded-2xl border border-slate-200/70 shadow-sm overflow-hidden">
-                    <div class="p-4 border-b border-slate-100 flex flex-col sm:flex-row justify-between sm:items-center gap-2 bg-slate-50/50">
+                    <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
                         <div>
                             <h2 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Live Transaction Ledger</h2>
-                            <p class="text-[11px] text-slate-400">Total {{ expenses|length }} entries recorded</p>
+                            <p class="text-[11px] text-slate-400">{{ expenses|length }} entries recorded for {{ current_month }}</p>
                         </div>
                     </div>
 
                     {% if expenses %}
-                    <ul class="divide-y divide-slate-100 max-h-[380px] overflow-y-auto">
+                    <ul class="divide-y divide-slate-100 max-h-[420px] overflow-y-auto">
                         {% for item in expenses %}
                         <li class="p-3.5 flex justify-between items-center hover:bg-slate-50/70 transition group">
                             <div class="flex items-center gap-3">
@@ -270,23 +268,38 @@
                                     {{ item[3][0] }}
                                 </div>
                                 <div>
-                                    <div class="flex items-center gap-2">
+                                    <div class="flex items-center gap-2 flex-wrap">
                                         <p class="font-bold text-slate-800 text-xs leading-tight">{{ item[1] }}</p>
                                         {% if item[4] == 1 %}
-                                        <span class="text-[9px] font-bold bg-amber-100 text-amber-800 px-1.5 py-0.2 rounded-full">Split (50%)</span>
+                                            {% if item[7] == 1 %}
+                                            <span class="text-[9px] font-bold bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded-full">
+                                                ✓ Settled with {{ item[5] or 'Friend' }}
+                                            </span>
+                                            {% else %}
+                                            <span class="text-[9px] font-bold bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded-full">
+                                                ⏳ {{ item[5] or 'Friend' }} Owes ₹{{ "{:,.2f}".format(item[6]) }}
+                                            </span>
+                                            {% endif %}
                                         {% endif %}
                                     </div>
                                     <div class="flex items-center gap-2 mt-0.5">
                                         <span class="text-[10px] text-slate-400 font-medium">{{ item[3] }}</span>
                                         <span class="text-[10px] text-slate-300">•</span>
-                                        <span class="text-[10px] text-slate-400">{{ item[5] }}</span>
+                                        <span class="text-[10px] text-slate-400">{{ item[8] }}</span>
                                     </div>
                                 </div>
                             </div>
                             <div class="flex items-center gap-3">
-                                <span class="font-bold text-rose-500 text-xs">-₹{{ item[2] }}</span>
-                                <a href="/delete/{{ item[0] }}" 
-                                   title="Delete Entry"
+                                <span class="font-bold text-rose-500 text-xs">-₹{{ "{:,.2f}".format(item[2]) }}</span>
+                                
+                                {% if item[4] == 1 and item[7] == 0 %}
+                                <a href="/settle/{{ item[0] }}" title="Mark as Paid" 
+                                   class="text-[10px] font-bold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 px-2 py-1 rounded-lg transition">
+                                    Mark Paid
+                                </a>
+                                {% endif %}
+
+                                <a href="/delete/{{ item[0] }}" title="Delete Entry"
                                    class="opacity-40 group-hover:opacity-100 text-slate-400 hover:text-rose-600 font-bold p-1 rounded-lg hover:bg-rose-50 transition text-xs">
                                     ✕
                                 </a>
@@ -295,7 +308,7 @@
                         {% endfor %}
                     </ul>
                     {% else %}
-                    <div class="p-10 text-center text-slate-400 text-xs">Koi transactions nahi hain. Naya kharcha add karein!</div>
+                    <div class="p-10 text-center text-slate-400 text-xs">Is mahine koi transaction nahi hai.</div>
                     {% endif %}
                 </div>
 
@@ -305,7 +318,7 @@
 
     </main>
 
-    <!-- Professional Footer -->
+    <!-- Footer -->
     <footer class="bg-white border-t border-slate-200/80 py-6 mt-12">
         <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
             <div>
@@ -318,34 +331,147 @@
         </div>
     </footer>
 
-    <!-- Edit Budget Modal -->
+    <!-- GST BILL SPLITTER MODAL -->
+    <div id="gstSplitModal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-xl max-w-md w-full p-6 space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h3 class="font-black text-slate-900 text-sm">🍕 GST / Unequal Bill Splitter</h3>
+                <button type="button" onclick="document.getElementById('gstSplitModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
+            </div>
+            
+            <p class="text-xs text-slate-500">Do logo ne alag-alag khaya aur total bill par GST/tax laga? Automatic proportional split karein.</p>
+            
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Mera Share (Base ₹)</label>
+                    <input type="number" id="calcMyBase" value="400" placeholder="400" oninput="calculateGstSplit()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Dost Ka Share (Base ₹)</label>
+                    <input type="number" id="calcFriendBase" value="600" placeholder="600" oninput="calculateGstSplit()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm focus:outline-none">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">GST / Tax Rate (%)</label>
+                    <select id="calcGstRate" onchange="calculateGstSplit()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm focus:outline-none font-bold">
+                        <option value="5">5% (Restaurant)</option>
+                        <option value="12">12%</option>
+                        <option value="18" selected>18% (Standard GST)</option>
+                        <option value="28">28%</option>
+                        <option value="0">0% (Only Delivery/Flat)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-500 uppercase mb-1">Extra Flat (Delivery ₹)</label>
+                    <input type="number" id="calcExtraCharge" value="0" placeholder="0" oninput="calculateGstSplit()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm focus:outline-none">
+                </div>
+            </div>
+
+            <!-- Result Box -->
+            <div class="p-3.5 bg-indigo-50/70 border border-indigo-100 rounded-xl text-xs space-y-1.5 font-medium">
+                <div class="flex justify-between">
+                    <span class="text-slate-600">Total Bill (With Tax):</span>
+                    <strong class="text-slate-900" id="resTotalBill">₹1,180.00</strong>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-indigo-700">Tujhe kitna bharna hai:</span>
+                    <strong class="text-indigo-700 font-black" id="resMyShare">₹472.00</strong>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-amber-800">Dost se kitna lena hai:</span>
+                    <strong class="text-amber-800 font-black" id="resFriendShare">₹708.00</strong>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-2 pt-2">
+                <button type="button" onclick="document.getElementById('gstSplitModal').classList.add('hidden')" 
+                        class="px-3.5 py-2 text-xs font-semibold text-slate-500 hover:bg-slate-100 rounded-xl transition">Band Karein</button>
+                <button type="button" onclick="applyGstSplitToForm()" 
+                        class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition shadow-md shadow-indigo-100">
+                    Apply to Expense Form →
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Budget Limit Modal -->
     <div id="budgetModal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl border border-slate-200 shadow-xl max-w-sm w-full p-5">
-            <h3 class="font-bold text-slate-900 text-sm mb-1">Set Monthly Pocket Money / Allowance</h3>
-            <p class="text-xs text-slate-500 mb-4">Ghar se is mahine kitne paise mile hain?</p>
+            <h3 class="font-bold text-slate-900 text-sm mb-1">Monthly Pocket Money / Budget</h3>
+            <p class="text-xs text-slate-500 mb-4">Set allowance limit</p>
             
             <form action="/set_budget" method="POST" class="space-y-3">
                 <div>
                     <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Monthly Budget (₹)</label>
-                    <input type="number" step="any" name="budget" value="{{ budget }}" required
-                           class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition">
+                    <input type="number" step="any" max="1000000" name="budget" value="7000" required
+                           class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition">
                 </div>
                 
                 <div class="flex items-center justify-end gap-2 pt-2">
                     <button type="button" onclick="document.getElementById('budgetModal').classList.add('hidden')" 
-                            class="px-3 py-2 text-xs font-semibold text-slate-500 hover:bg-slate-100 rounded-xl transition">
-                        Cancel
-                    </button>
-                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-4 py-2 rounded-xl transition shadow-md shadow-indigo-100">
-                        Save Budget
-                    </button>
+                            class="px-3 py-2 text-xs font-semibold text-slate-500 hover:bg-slate-100 rounded-xl transition">Cancel</button>
+                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-4 py-2 rounded-xl transition shadow-md shadow-indigo-100">Save</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Chart.js Script -->
+    <!-- Calculations Script -->
     <script>
+        function calculateGstSplit() {
+            const myBase = parseFloat(document.getElementById('calcMyBase').value) || 0;
+            const friendBase = parseFloat(document.getElementById('calcFriendBase').value) || 0;
+            const gstRate = parseFloat(document.getElementById('calcGstRate').value) || 0;
+            const extra = parseFloat(document.getElementById('calcExtraCharge').value) || 0;
+
+            const baseTotal = myBase + friendBase;
+            if (baseTotal <= 0) return;
+
+            const gstAmount = (baseTotal * gstRate) / 100;
+            const totalBill = baseTotal + gstAmount + extra;
+
+            // Proportional tax distribution
+            const myRatio = myBase / baseTotal;
+            const friendRatio = friendBase / baseTotal;
+
+            const myShare = myBase + (gstAmount * myRatio) + (extra * myRatio);
+            const friendShare = friendBase + (gstAmount * friendRatio) + (extra * friendRatio);
+
+            document.getElementById('resTotalBill').innerText = '₹' + totalBill.toFixed(2);
+            document.getElementById('resMyShare').innerText = '₹' + myShare.toFixed(2);
+            document.getElementById('resFriendShare').innerText = '₹' + friendShare.toFixed(2);
+        }
+
+        function applyGstSplitToForm() {
+            const myBase = parseFloat(document.getElementById('calcMyBase').value) || 0;
+            const friendBase = parseFloat(document.getElementById('calcFriendBase').value) || 0;
+            const gstRate = parseFloat(document.getElementById('calcGstRate').value) || 0;
+            const extra = parseFloat(document.getElementById('calcExtraCharge').value) || 0;
+
+            const baseTotal = myBase + friendBase;
+            const gstAmount = (baseTotal * gstRate) / 100;
+            const totalBill = baseTotal + gstAmount + extra;
+            const friendRatio = baseTotal > 0 ? (friendBase / baseTotal) : 0.5;
+            const friendShare = friendBase + (gstAmount * friendRatio) + (extra * friendRatio);
+
+            document.getElementById('formTitle').value = 'Food Order (Split with GST)';
+            document.getElementById('formAmount').value = totalBill.toFixed(2);
+            document.getElementById('formCategory').value = 'Food & Cafe';
+
+            const splitCheckbox = document.getElementById('split');
+            if (!splitCheckbox.checked) {
+                splitCheckbox.click();
+            }
+            document.getElementById('formFriendOwes').value = friendShare.toFixed(2);
+            document.getElementById('gstSplitModal').classList.add('hidden');
+        }
+
+        // Initialize calculator once
+        calculateGstSplit();
+
+        // Chart.js Setup
         const labels = {{ chart_labels | safe }};
         const dataValues = {{ chart_values | safe }};
 
@@ -369,10 +495,7 @@
                     plugins: {
                         legend: {
                             position: 'bottom',
-                            labels: {
-                                boxWidth: 12,
-                                font: { size: 11, family: 'Plus Jakarta Sans' }
-                            }
+                            labels: { boxWidth: 12, font: { size: 11, family: 'Plus Jakarta Sans' } }
                         }
                     },
                     cutout: '70%'

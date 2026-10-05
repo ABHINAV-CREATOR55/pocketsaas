@@ -1,0 +1,156 @@
+{% extends "layout.html" %}
+{% block title %}Split Bill & GST{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- GST / Unequal Bill Calculator Form -->
+    <div class="lg:col-span-5 space-y-4">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+            <div>
+                <h2 class="text-xs font-bold text-slate-900 uppercase tracking-wider">🍕 GST / Proportional Bill Splitter</h2>
+                <p class="text-[11px] text-slate-400 mt-0.5">Calculates unequal food orders + GST + delivery fairly.</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Mera Share (₹)</label>
+                    <input type="number" id="myBase" value="400" oninput="calcSplit()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Dost Ka Share (₹)</label>
+                    <input type="number" id="friendBase" value="600" oninput="calcSplit()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">GST Tax Rate</label>
+                    <select id="gstRate" onchange="calcSplit()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs font-bold">
+                        <option value="5">5% (Restaurant)</option>
+                        <option value="12">12%</option>
+                        <option value="18" selected>18% (Standard GST)</option>
+                        <option value="0">0% (No GST)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Delivery / Extra (₹)</label>
+                    <input type="number" id="extraCharge" value="0" oninput="calcSplit()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs">
+                </div>
+            </div>
+
+            <!-- Breakdown result -->
+            <div class="p-3 bg-indigo-50/70 border border-indigo-100 rounded-xl text-xs space-y-1.5 font-medium">
+                <div class="flex justify-between">
+                    <span class="text-slate-600">Total Bill Payable:</span>
+                    <strong class="text-slate-900" id="resTotal">₹1,180.00</strong>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-indigo-700">Tujhe kitna bharna hai:</span>
+                    <strong class="text-indigo-700 font-bold" id="resMy">₹472.00</strong>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-amber-800">Dost kitna dega:</span>
+                    <strong class="text-amber-800 font-bold" id="resFriend">₹708.00</strong>
+                </div>
+            </div>
+
+            <!-- Add to Ledger Direct -->
+            <form action="/add" method="POST" class="space-y-3 pt-2 border-t border-slate-100">
+                <input type="hidden" name="is_split" value="1">
+                <input type="hidden" name="category" value="Food & Cafe">
+                <input type="hidden" id="formBillAmount" name="amount" value="1180.00">
+                <input type="hidden" id="formFriendOwes" name="friend_owes" value="708.00">
+                
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Bill Description</label>
+                    <input type="text" name="title" value="Zomato / Dinner Split" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Friend Name</label>
+                    <input type="text" name="friend_name" placeholder="Friend's Name (e.g. Himshikhar)" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-xs">
+                </div>
+                <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 rounded-xl text-xs transition">
+                    + Record in Shared Ledger
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dues & Settlement Ledger -->
+    <div class="lg:col-span-7 space-y-4">
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+            <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                <div>
+                    <h2 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Shared Friends Ledger</h2>
+                    <p class="text-[11px] text-slate-400">Total Pending Dues: <strong class="text-amber-700">₹{{ pending_total }}</strong></p>
+                </div>
+            </div>
+
+            {% if split_items %}
+            <ul class="divide-y divide-slate-100 max-h-[500px] overflow-y-auto text-xs">
+                {% for item in split_items %}
+                <li class="p-3.5 flex justify-between items-center hover:bg-slate-50 transition">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-slate-800">{{ item[1] }}</span>
+                            {% if item[5] == 1 %}
+                            <span class="text-[9px] font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">✓ Settled</span>
+                            {% else %}
+                            <span class="text-[9px] font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">⏳ Pending</span>
+                            {% endif %}
+                        </div>
+                        <p class="text-[10px] text-slate-400 mt-0.5">
+                            Friend: <strong>{{ item[3] or 'Roommate' }}</strong> • Total Bill: ₹{{ "{:,.2f}".format(item[2]) }} • {{ item[6] }}
+                        </p>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <span class="font-black text-amber-700">₹{{ "{:,.2f}".format(item[4]) }}</span>
+                        {% if item[5] == 0 %}
+                        <a href="/settle/{{ item[0] }}" class="text-[10px] font-bold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 px-2.5 py-1 rounded-lg transition">
+                            Mark Paid
+                        </a>
+                        {% endif %}
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <div class="p-8 text-center text-slate-400 text-xs">No shared bills recorded yet.</div>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function calcSplit() {
+        const my = parseFloat(document.getElementById('myBase').value) || 0;
+        const fr = parseFloat(document.getElementById('friendBase').value) || 0;
+        const rate = parseFloat(document.getElementById('gstRate').value) || 0;
+        const extra = parseFloat(document.getElementById('extraCharge').value) || 0;
+
+        const base = my + fr;
+        if (base <= 0) return;
+
+        const gst = (base * rate) / 100;
+        const total = base + gst + extra;
+        const myRatio = my / base;
+        const frRatio = fr / base;
+
+        const myShare = my + (gst * myRatio) + (extra * myRatio);
+        const frShare = fr + (gst * frRatio) + (extra * frRatio);
+
+        document.getElementById('resTotal').innerText = '₹' + total.toFixed(2);
+        document.getElementById('resMy').innerText = '₹' + myShare.toFixed(2);
+        document.getElementById('resFriend').innerText = '₹' + frShare.toFixed(2);
+
+        document.getElementById('formBillAmount').value = total.toFixed(2);
+        document.getElementById('formFriendOwes').value = frShare.toFixed(2);
+    }
+    calcSplit();
+</script>
+{% endblock %}

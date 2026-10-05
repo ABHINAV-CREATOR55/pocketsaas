@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}PocketSaaS{% endblock %} - Smart Student Budgeting</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Outfit:wght@800;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .font-brand { font-family: 'Outfit', sans-serif; }
+    </style>
+</head>
+<body class="bg-[#F8FAFC] text-slate-800 antialiased min-h-screen flex flex-col justify-between">
+
+    <!-- Top Clean Navbar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="/dashboard" class="flex items-center gap-2">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-600 flex items-center justify-center text-white font-extrabold text-base shadow-sm">
+                        ₹
+                    </div>
+                    <span class="font-black text-slate-900 tracking-tight text-lg">Pocket<span class="text-indigo-600">SaaS</span></span>
+                </a>
+            </div>
+
+            <!-- Main 4 Tabs Navigation -->
+            <nav class="hidden md:flex items-center gap-1 bg-slate-100 p-1 rounded-2xl">
+                <a href="/dashboard" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition {% if active_tab == 'dashboard' %}bg-white text-indigo-600 shadow-sm{% else %}text-slate-600 hover:text-slate-900{% endif %}">
+                    📊 Dashboard
+                </a>
+                <a href="/expenses" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition {% if active_tab == 'expenses' %}bg-white text-indigo-600 shadow-sm{% else %}text-slate-600 hover:text-slate-900{% endif %}">
+                    💳 Expenses
+                </a>
+                <a href="/split" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition {% if active_tab == 'split' %}bg-white text-indigo-600 shadow-sm{% else %}text-slate-600 hover:text-slate-900{% endif %}">
+                    🍕 Split & GST
+                </a>
+                <a href="/help" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition {% if active_tab == 'help' %}bg-white text-indigo-600 shadow-sm{% else %}text-slate-600 hover:text-slate-900{% endif %}">
+                    🤖 Auto-Assistant
+                </a>
+            </nav>
+
+            <!-- User Menu -->
+            <div class="flex items-center gap-2">
+                <span class="text-xs font-bold text-slate-700 bg-slate-100 px-3 py-1.5 rounded-xl capitalize hidden sm:inline-block">
+                    👤 {{ username }}
+                </span>
+                <a href="/logout" class="text-xs text-rose-500 hover:text-rose-700 font-bold bg-rose-50 hover:bg-rose-100 px-2.5 py-1.5 rounded-xl transition">
+                    Logout
+                </a>
+            </div>
+        </div>
+
+        <!-- Mobile Bottom Tabs -->
+        <div class="md:hidden flex items-center justify-around border-t border-slate-100 py-2 bg-white">
+            <a href="/dashboard" class="text-[11px] font-bold {% if active_tab == 'dashboard' %}text-indigo-600{% else %}text-slate-500{% endif %}">📊 Overview</a>
+            <a href="/expenses" class="text-[11px] font-bold {% if active_tab == 'expenses' %}text-indigo-600{% else %}text-slate-500{% endif %}">💳 Expenses</a>
+            <a href="/split" class="text-[11px] font-bold {% if active_tab == 'split' %}text-indigo-600{% else %}text-slate-500{% endif %}">🍕 Split Bill</a>
+            <a href="/help" class="text-[11px] font-bold {% if active_tab == 'help' %}text-indigo-600{% else %}text-slate-500{% endif %}">🤖 Help</a>
+        </div>
+    </header>
+
+    <!-- Page Content -->
+    <main class="max-w-6xl mx-auto px-4 py-6 w-full flex-grow">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Clean Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 mt-8">
+        <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
+            <span>PocketSaaS • Engineered for College Students</span>
+            <span>Designed by <strong class="text-indigo-600">ABHINAV</strong></span>
+        </div>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

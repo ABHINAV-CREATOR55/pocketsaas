@@ -1,0 +1,82 @@
+{% extends "layout.html" %}
+{% block title %}Auto-Assistant & Help Desk{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-6">
+
+    <!-- Assistant Header -->
+    <div class="bg-gradient-to-r from-indigo-900 to-slate-900 text-white p-6 rounded-3xl shadow-md flex items-center gap-4">
+        <div class="w-12 h-12 rounded-2xl bg-indigo-500/20 border border-indigo-400/30 flex items-center justify-center text-2xl">
+            🤖
+        </div>
+        <div>
+            <h1 class="text-lg font-black">PocketSaaS Auto-Assistant</h1>
+            <p class="text-xs text-indigo-200">Self-healing diagnostic engine & interactive help guide for students.</p>
+        </div>
+    </div>
+
+    <!-- Self-Healing Diagnostics Tool -->
+    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="text-sm font-black text-slate-900">⚡ 1-Click Automated Health Check & Repair</h2>
+                <p class="text-xs text-slate-500">Detects scientific notation overflow, corrupted rows, or budget issues and fixes them automatically.</p>
+            </div>
+            <form action="/auto_diagnose" method="POST">
+                <input type="hidden" name="issue_type" value="Full System Diagnostic">
+                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition shadow-sm">
+                    Run Auto-Fix Scan
+                </button>
+            </form>
+        </div>
+
+        {% if history %}
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs space-y-2">
+            <span class="font-bold text-slate-700 block">Recent Auto-Diagnostic Results:</span>
+            {% for h in history %}
+            <div class="flex justify-between items-center text-[11px] text-slate-600 border-b border-slate-200/50 pb-1.5 last:border-0 last:pb-0">
+                <span>{{ h[2] }}</span>
+                <span class="text-slate-400">{{ h[3] }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Interactive FAQ Guide -->
+    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+        <h2 class="text-sm font-black text-slate-900">📚 How PocketSaaS Works (Student FAQ)</h2>
+        
+        <div class="space-y-3 text-xs text-slate-600">
+            <div class="p-3 bg-slate-50 rounded-xl">
+                <strong class="text-slate-900 block mb-1">1. Daily Safe Spend calculation kaise hoti hai?</strong>
+                Ye formula lagata hai: <code>(Monthly Budget - Total Spend) / Days Remaining in Month</code>. Agar mahine ke 10 din bache hain aur ₹2,000 allowance bachi hai, toh daily limit ₹200/day ban jayegi.
+            </div>
+
+            <div class="p-3 bg-slate-50 rounded-xl">
+                <strong class="text-slate-900 block mb-1">2. GST Bill Splitter kiske liye hai?</strong>
+                Jab do friends alag amount ka khana mangwate hain (jaise ₹400 aur ₹600) aur restaurant flat GST/tax lagata hai, toh dono ka tax share unke order ke proportion ke hisaab se distribute hota hai taaki kisi ka nuksan na ho.
+            </div>
+
+            <div class="p-3 bg-slate-50 rounded-xl">
+                <strong class="text-slate-900 block mb-1">3. Testing ke baad sara data clean kaise karein?</strong>
+                Aap Dashboard ya Expenses se entries delete kar sakte hain, ya seedha Reset Ledger chala kar fresh shuruat kar sakte hain.
+            </div>
+        </div>
+    </div>
+
+    <!-- Reset Ledger Card -->
+    <div class="bg-rose-50 border border-rose-200 p-4 rounded-2xl flex items-center justify-between">
+        <div>
+            <span class="text-xs font-bold text-rose-800 block">Fresh Reset Database</span>
+            <span class="text-[11px] text-rose-600">Testing data saaf karke clean state mein shuru karein.</span>
+        </div>
+        <form action="/reset_data" method="POST" onsubmit="return confirm('Kya aap apna sara ledger data delete karna chahte hain?')">
+            <button type="submit" class="text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 px-3.5 py-2 rounded-xl transition">
+                Reset All Ledger
+            </button>
+        </form>
+    </div>
+
+</div>
+{% endblock %}

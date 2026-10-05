@@ -1,0 +1,120 @@
+{% extends "layout.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Header with Month Picker -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+        <div>
+            <h1 class="text-xl font-black text-slate-900">Financial Overview</h1>
+            <p class="text-xs text-slate-500">Current financial health and daily spending allowance.</p>
+        </div>
+        <form method="GET" action="/" class="flex items-center gap-2">
+            <select name="month" onchange="this.form.submit()" class="text-xs font-bold bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-700 shadow-sm focus:outline-none">
+                {% for m in available_months %}
+                <option value="{{ m }}" {% if m == current_month %}selected{% endif %}>📅 {{ m }}</option>
+                {% endfor %}
+            </select>
+        </form>
+    </div>
+
+    <!-- Budget Utilization Bar -->
+    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-2">
+        <div class="flex justify-between items-center text-xs">
+            <span class="font-bold text-slate-700">Monthly Budget Burn</span>
+            <span class="font-black px-2 py-0.5 rounded-full {% if budget_percent > 90 %}bg-rose-100 text-rose-700{% elif budget_percent > 70 %}bg-amber-100 text-amber-700{% else %}bg-emerald-100 text-emerald-700{% endif %}">
+                {{ budget_percent }}% Used
+            </span>
+        </div>
+        <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
+            <div class="h-full rounded-full transition-all duration-500 {% if budget_percent > 90 %}bg-rose-500{% elif budget_percent > 70 %}bg-amber-500{% else %}bg-indigo-600{% endif %}" 
+                 style="width: {{ [budget_percent, 100]|min }}%"></div>
+        </div>
+        <p class="text-[11px] text-slate-400">Spent ₹{{ total }} of ₹{{ budget }} limit.</p>
+    </div>
+
+    <!-- 4 Clear Metric Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
+            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Total Spent</span>
+            <div class="text-2xl font-black text-slate-900 mt-2">₹{{ total }}</div>
+            <span class="text-[10px] text-slate-400">{{ current_month }} Total</span>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
+            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Remaining Allowance</span>
+            <div class="text-2xl font-black {% if remaining_raw < 1000 %}text-rose-500{% else %}text-emerald-600{% endif %} mt-2">₹{{ remaining }}</div>
+            <span class="text-[10px] text-slate-400">Budget: ₹{{ budget }}</span>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-indigo-100 shadow-sm bg-indigo-50/20">
+            <span class="text-[11px] font-bold text-indigo-600 uppercase tracking-wider">Daily Safe Spend</span>
+            <div class="text-2xl font-black text-indigo-900 mt-2">₹{{ daily_safe_spend }}<span class="text-xs font-medium text-slate-400">/day</span></div>
+            <span class="text-[10px] text-indigo-600/80">{{ days_left }} days left in month</span>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-amber-200 shadow-sm bg-amber-50/20">
+            <span class="text-[11px] font-bold text-amber-600 uppercase tracking-wider">Friends Owe You</span>
+            <div class="text-2xl font-black text-amber-700 mt-2">₹{{ roommate_owes }}</div>
+            <a href="/split" class="text-[10px] font-bold text-amber-700 underline mt-1 block">View shared ledger →</a>
+        </div>
+    </div>
+
+    <!-- Charts & Recent Activity -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="lg:col-span-6 bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
+            <h2 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-4">Category Breakdown</h2>
+            <div class="w-full max-w-xs mx-auto py-2">
+                <canvas id="expenseChart"></canvas>
+            </div>
+        </div>
+
+        <div class="lg:col-span-6 bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Recent Transactions</h2>
+                <a href="/expenses" class="text-xs font-bold text-indigo-600 hover:underline">View All →</a>
+            </div>
+            {% if recent_transactions %}
+            <ul class="divide-y divide-slate-100 text-xs">
+                {% for item in recent_transactions %}
+                <li class="py-2.5 flex justify-between items-center">
+                    <div>
+                        <p class="font-bold text-slate-800">{{ item[0] }}</p>
+                        <p class="text-[10px] text-slate-400">{{ item[2] }} • {{ item[3] }}</p>
+                    </div>
+                    <span class="font-bold text-rose-500">-₹{{ "{:,.2f}".format(item[1]) }}</span>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="text-slate-400 text-xs py-8 text-center">No transactions recorded yet.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const labels = {{ chart_labels | safe }};
+    const dataValues = {{ chart_values | safe }};
+    if (labels.length > 0) {
+        new Chart(document.getElementById('expenseChart').getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: dataValues,
+                    backgroundColor: ['#4F46E5', '#06B6D4', '#10B981', '#F59E0B', '#EC4899', '#8B5CF6']
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } } },
+                cutout: '70%'
+            }
+        });
+    }
+</script>
+{% endblock %}

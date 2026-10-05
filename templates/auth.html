@@ -5,114 +5,107 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PocketSaaS - Login & Sign Up</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Outfit:wght@800;900&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        .font-brand { font-family: 'Outfit', sans-serif; }
-        @keyframes gradientMove {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        .animated-wordart {
-            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 25%, #ec4899 50%, #f59e0b 75%, #4f46e5 100%);
-            background-size: 300% 300%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: gradientMove 6s ease infinite;
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@800;900&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Plus Jakarta Sans', sans-serif; }</style>
 </head>
 <body class="bg-[#F8FAFC] min-h-screen flex items-center justify-center p-4">
 
-    <div class="max-w-md w-full bg-white rounded-3xl border border-slate-200/80 shadow-xl p-8 space-y-6">
+    <div class="w-full max-w-md bg-white border border-slate-200/80 rounded-3xl p-8 shadow-xl shadow-slate-200/50 space-y-6">
         
-        <!-- Logo & Branding -->
+        <!-- Header -->
         <div class="text-center space-y-1">
-            <div class="w-12 h-12 mx-auto rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-600 flex items-center justify-center text-white font-black text-xl shadow-lg shadow-indigo-100 mb-3">
+            <div class="w-12 h-12 rounded-2xl bg-indigo-600 flex items-center justify-center text-white font-black text-2xl mx-auto shadow-md shadow-indigo-600/30">
                 ₹
             </div>
             <h1 class="text-2xl font-black text-slate-900 tracking-tight">Pocket<span class="text-indigo-600">SaaS</span></h1>
-            <p class="font-brand text-xs font-black uppercase tracking-wider animated-wordart">CREATED BY ABHINAV</p>
-            <p class="text-xs text-slate-400 font-medium pt-1">Student Budgeting & Expense Engine</p>
+            <p class="text-[11px] font-extrabold uppercase tracking-widest text-indigo-600">CREATED BY ABHINAV</p>
+            <p class="text-xs text-slate-400">Student Budgeting & Expense Engine</p>
         </div>
 
         {% if error %}
-        <div class="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold text-center">
+        <div class="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-600 text-xs font-semibold text-center">
             ⚠️ {{ error }}
         </div>
         {% endif %}
 
-        <!-- Tab Buttons (Login vs Signup) -->
-        <div class="flex bg-slate-100 p-1 rounded-2xl">
-            <button type="button" id="tabLogin" onclick="showAuth('login')" 
-                    class="w-1/2 py-2 text-xs font-bold rounded-xl bg-white shadow-sm text-slate-900 transition">
-                Sign In
-            </button>
-            <button type="button" id="tabSignup" onclick="showAuth('signup')" 
-                    class="w-1/2 py-2 text-xs font-bold rounded-xl text-slate-500 hover:text-slate-800 transition">
-                Create Account
-            </button>
+        {% if success %}
+        <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-600 text-xs font-semibold text-center">
+            ✅ {{ success }}
+        </div>
+        {% endif %}
+
+        <!-- Tab Buttons: Sign In / Create Account / Forgot PW -->
+        <div class="flex bg-slate-100 p-1 rounded-2xl text-xs font-bold">
+            <button type="button" id="tabLoginBtn" onclick="openTab('login')" class="flex-1 py-2 rounded-xl transition bg-white text-indigo-600 shadow-sm">Sign In</button>
+            <button type="button" id="tabSignupBtn" onclick="openTab('signup')" class="flex-1 py-2 rounded-xl transition text-slate-500 hover:text-slate-900">Create Account</button>
+            <button type="button" id="tabForgotBtn" onclick="openTab('forgot')" class="flex-1 py-2 rounded-xl transition text-slate-500 hover:text-slate-900">Forgot?</button>
         </div>
 
-        <!-- Login Form -->
+        <!-- 1. SIGN IN FORM -->
         <form id="loginForm" action="/login" method="POST" class="space-y-4">
             <div>
-                <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Username</label>
-                <input type="text" name="username" required placeholder="e.g. abhinav" 
-                       class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition">
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">Gmail Address</label>
+                <input type="email" name="email" required placeholder="name@gmail.com" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:bg-white focus:outline-none focus:border-indigo-600">
             </div>
             <div>
-                <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Password</label>
-                <input type="password" name="password" required placeholder="••••••••" 
-                       class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition">
+                <div class="flex justify-between items-center mb-1">
+                    <label class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Password</label>
+                    <a href="javascript:void(0)" onclick="openTab('forgot')" class="text-[11px] font-bold text-indigo-600 hover:underline">Forgot Password?</a>
+                </div>
+                <input type="password" name="password" required placeholder="••••••••" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:bg-white focus:outline-none focus:border-indigo-600">
             </div>
-            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl text-sm transition shadow-md shadow-indigo-100">
+            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl text-sm transition shadow-lg shadow-indigo-600/20">
                 Log In to Workspace →
             </button>
         </form>
 
-        <!-- Signup Form (Hidden by default) -->
+        <!-- 2. CREATE ACCOUNT FORM -->
         <form id="signupForm" action="/signup" method="POST" class="space-y-4 hidden">
             <div>
-                <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Choose Username</label>
-                <input type="text" name="username" required placeholder="min 3 letters" 
-                       class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition">
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">Your Name</label>
+                <input type="text" name="username" required placeholder="e.g. Abhinav" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:bg-white focus:outline-none focus:border-indigo-600">
             </div>
             <div>
-                <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Choose Password</label>
-                <input type="password" name="password" required placeholder="min 4 characters" 
-                       class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition">
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">Gmail (1 Gmail = 1 Account)</label>
+                <input type="email" name="email" required placeholder="e.g. abhinav@gmail.com" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:bg-white focus:outline-none focus:border-indigo-600">
             </div>
-            <button type="submit" class="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold py-3 rounded-xl text-sm transition shadow-md shadow-violet-100">
-                Create Free Account →
+            <div>
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">Create Password</label>
+                <input type="password" name="password" required placeholder="Min 4 characters" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:bg-white focus:outline-none focus:border-indigo-600">
+            </div>
+            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-sm transition shadow-lg shadow-emerald-600/20">
+                Create Account →
             </button>
         </form>
 
-        <p class="text-[11px] text-center text-slate-400">
-            Isolated individual ledger • 100% Free & Open-source
-        </p>
+        <!-- 3. FORGOT PASSWORD FORM -->
+        <form id="forgotForm" action="/forgot_password" method="POST" class="space-y-4 hidden">
+            <div>
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">Your Registered Gmail</label>
+                <input type="email" name="email" required placeholder="registered@gmail.com" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:bg-white focus:outline-none focus:border-indigo-600">
+            </div>
+            <div>
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">Set New Password</label>
+                <input type="password" name="new_password" required placeholder="Enter new password" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:bg-white focus:outline-none focus:border-indigo-600">
+            </div>
+            <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 rounded-xl text-sm transition shadow-lg shadow-amber-600/20">
+                Reset Password Now
+            </button>
+        </form>
 
+        <div class="text-center pt-2">
+            <a href="/" class="text-xs text-indigo-600 hover:underline font-bold">← Back to Special Landing Page</a>
+        </div>
     </div>
 
     <script>
-        function showAuth(mode) {
-            const loginForm = document.getElementById('loginForm');
-            const signupForm = document.getElementById('signupForm');
-            const tabLogin = document.getElementById('tabLogin');
-            const tabSignup = document.getElementById('tabSignup');
-
-            if (mode === 'signup') {
-                loginForm.classList.add('hidden');
-                signupForm.classList.remove('hidden');
-                tabSignup.className = "w-1/2 py-2 text-xs font-bold rounded-xl bg-white shadow-sm text-slate-900 transition";
-                tabLogin.className = "w-1/2 py-2 text-xs font-bold rounded-xl text-slate-500 hover:text-slate-800 transition";
-            } else {
-                signupForm.classList.add('hidden');
-                loginForm.classList.remove('hidden');
-                tabLogin.className = "w-1/2 py-2 text-xs font-bold rounded-xl bg-white shadow-sm text-slate-900 transition";
-                tabSignup.className = "w-1/2 py-2 text-xs font-bold rounded-xl text-slate-500 hover:text-slate-800 transition";
-            }
+        function openTab(tab) {
+            ['login', 'signup', 'forgot'].forEach(t => {
+                document.getElementById(t + 'Form').classList.add('hidden');
+                document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1) + 'Btn').className = "flex-1 py-2 rounded-xl transition text-slate-500 hover:text-slate-900";
+            });
+            document.getElementById(tab + 'Form').classList.remove('hidden');
+            document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1) + 'Btn').className = "flex-1 py-2 rounded-xl transition bg-white text-indigo-600 shadow-sm";
         }
     </script>
 </body>
